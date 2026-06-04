@@ -10,3 +10,5 @@ next-env.d.ts
 
 # Local Claude Code tooling (skills, commands, agents) — not part of the product
 /.claude
+# impeccable critique snapshots — local tooling output
+/.impeccable
