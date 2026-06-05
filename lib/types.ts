@@ -29,14 +29,67 @@ export interface BusinessPhoto {
   attribution?: string;
 }
 
+/** Geographic coordinates, flattened from Google's `geometry.location`. */
+export interface BusinessLocation {
+  lat: number;
+  lng: number;
+}
+
+/**
+ * Service options Google reports for a place. Every flag is optional: `undefined`
+ * means Google didn't say (unknown), NOT "no". Only render a badge when the
+ * value is explicitly present.
+ */
+export interface ServiceOptions {
+  dineIn?: boolean;
+  takeout?: boolean;
+  delivery?: boolean;
+  curbsidePickup?: boolean;
+  reservable?: boolean;
+}
+
+/**
+ * Meal/dietary attributes Google reports. Same optional semantics as
+ * ServiceOptions: `undefined` = unknown, not "no".
+ */
+export interface Serves {
+  breakfast?: boolean;
+  brunch?: boolean;
+  lunch?: boolean;
+  dinner?: boolean;
+  beer?: boolean;
+  wine?: boolean;
+  vegetarian?: boolean;
+}
+
 export interface Business {
   placeId: string;
   name: string;
   address?: string;
   phone?: string;
+  /** International-format phone (e.g. "+52 984 169 7524"), ideal for WhatsApp links. */
+  internationalPhone?: string;
   website?: string;
+  /** Link to the business's Google Maps profile. */
+  googleMapsUrl?: string;
   rating?: number;
   userRatingsTotal?: number;
+  /** Google price level, 0 (free) – 4 (very expensive). Often absent. */
+  priceLevel?: number;
+  /** Google's own editorial description of the place, when available. */
+  editorialSummary?: string;
+  /** Geographic coordinates, for maps and geo structured data. */
+  location?: BusinessLocation;
+  /** Google place types/categories (e.g. ["italian_restaurant", "restaurant"]). */
+  categories?: string[];
+  /** Google business status, e.g. "OPERATIONAL", "CLOSED_TEMPORARILY". */
+  businessStatus?: string;
+  /** Snapshot of whether the place was open at fetch time (not live). */
+  openNow?: boolean;
+  serviceOptions?: ServiceOptions;
+  serves?: Serves;
+  /** Whether the entrance is wheelchair accessible, when known. */
+  wheelchairAccessible?: boolean;
   photos: BusinessPhoto[];
   hours?: BusinessHours;
   reviews: BusinessReview[];
@@ -49,11 +102,66 @@ export interface SiteTheme {
   accentColor: string;
 }
 
+/** A single highlighted dish/service, grounded in real data (reviews). */
+export interface Specialty {
+  title: string;
+  description: string;
+}
+
 export interface SiteContent {
   /** Business name shown in the header (defaults to business.name). */
   businessName: string;
-  headline: string;
-  description: string;
+  /** Hero H1. */
+  heroHeadline: string;
+  /** Hero supporting line under the H1. */
+  heroSubhead: string;
+  /** "Sobre nosotros" section heading. */
+  aboutTitle: string;
+  /** "Sobre nosotros" body; default seeded from the business editorial summary. */
+  aboutBody: string;
+  /** Final call-to-action heading. */
+  ctaTitle: string;
+  /** Final call-to-action supporting text. */
+  ctaText: string;
+  /** AI-generated specialties (empty until generated). */
+  specialties: Specialty[];
+  /** AI-generated "why choose us" points (empty until generated). */
+  whyUs: string[];
+  /** AI-generated SEO meta description; falls back to other copy when absent. */
+  metaDescription?: string;
+}
+
+/**
+ * Floating WhatsApp button configuration. Prefilled from the business's
+ * international phone when available; fully editable by the owner (the country
+ * code / number split and the MX "1" quirk are theirs to confirm).
+ */
+export interface WhatsAppConfig {
+  enabled: boolean;
+  /** Country calling code digits, e.g. "52". */
+  countryCode: string;
+  /** Local number digits, no country code, e.g. "9841697524". */
+  number: string;
+  /** Prefilled message text. */
+  message: string;
+}
+
+/**
+ * The business's brand personality, captured in the intake step as a small set
+ * of closed-choice dimensions (no free text). Downstream copy generation
+ * (change `ai-content-generation`) consumes this to set the writing voice.
+ */
+export type Tone = "amigable" | "formal" | "divertido" | "elegante";
+export type Vibe = "caracter" | "calido" | "energico" | "clasico";
+export type CustomerFocus = "rapido" | "trato-calido" | "calidad" | "ambiente";
+
+export interface BrandVoice {
+  /** How the page should feel — sets the writing register. */
+  tone: Tone;
+  /** The business's overall vibe. */
+  vibe: Vibe;
+  /** What the owner values most with customers — the value proposition. */
+  customerFocus: CustomerFocus;
 }
 
 /**
@@ -65,4 +173,8 @@ export interface SiteConfig {
   business: Business;
   content: SiteContent;
   theme: SiteTheme;
+  /** Brand personality captured in the intake step. */
+  brandVoice: BrandVoice;
+  /** Floating WhatsApp button configuration. */
+  whatsapp: WhatsAppConfig;
 }

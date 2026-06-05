@@ -12,3 +12,6 @@ next-env.d.ts
 /.claude
 # impeccable critique snapshots — local tooling output
 /.impeccable
+
+# Assistant-maintained ledger of Vercel deploys (local safety record)
+/.deploy-ledger.json

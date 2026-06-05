@@ -136,7 +136,7 @@ export const TEMPLATE_CSS = `
   background: var(--accent);
 }
 
-/* ---------- Gallery ---------- */
+/* ---------- Galería ---------- */
 .site-template .st-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -154,7 +154,7 @@ export const TEMPLATE_CSS = `
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* ---------- Visit Us (single panel, two columns — no nested cards) ---------- */
+/* ---------- Visítanos (single panel, two columns — no nested cards) ---------- */
 .site-template .st-visit {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -220,6 +220,105 @@ export const TEMPLATE_CSS = `
 }
 .site-template .st-footer .st-footer-name { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; color: var(--ink); margin: 0 0 0.4rem; }
 .site-template .st-footer a { color: var(--primary-ink); }
+
+/* ---------- Hero meta + CTAs ---------- */
+.site-template .st-hero-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 1.5rem; }
+.site-template .st-hero-meta .st-rating { margin-top: 0; }
+.site-template .st-open {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.4rem 0.85rem; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font-size: var(--fs-small); font-weight: 600;
+}
+.site-template .st-cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+.site-template .st-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.7rem 1.4rem; border-radius: 999px;
+  font-weight: 700; font-size: var(--fs-body); text-decoration: none; cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.site-template .st-btn-primary { background: var(--accent); color: #1a1206; box-shadow: var(--shadow); }
+.site-template .st-btn-ghost { background: rgba(255, 255, 255, 0.12); color: #fff; border: 1px solid rgba(255, 255, 255, 0.45); }
+.site-template .st-btn:hover { transform: translateY(-2px); }
+
+/* ---------- Trust badges ---------- */
+.site-template .st-badges-wrap { background: var(--surface); border-bottom: 1px solid var(--border); }
+.site-template .st-badges {
+  max-width: 66rem; margin: 0 auto; padding: 1rem clamp(1.25rem, 4vw, 2rem);
+  display: flex; flex-wrap: wrap; gap: 0.6rem; list-style: none;
+}
+.site-template .st-badge {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.45rem 0.9rem; border-radius: 999px;
+  background: #fff; border: 1px solid var(--border);
+  font-size: var(--fs-small); font-weight: 600; color: var(--ink);
+}
+
+/* ---------- About ---------- */
+.site-template .st-about-body {
+  font-size: var(--fs-lead); color: var(--muted); line-height: 1.6;
+  max-width: 48rem; margin: 0; text-wrap: pretty;
+}
+
+/* ---------- Specialties (cards) ---------- */
+.site-template .st-specialties {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;
+}
+.site-template .st-specialty {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 1.4rem 1.5rem;
+}
+.site-template .st-specialty h3 {
+  font-family: var(--font-display); font-weight: 700; font-size: var(--fs-h3);
+  margin: 0 0 0.4rem; color: var(--ink);
+}
+.site-template .st-specialty p { margin: 0; color: var(--muted); line-height: 1.55; }
+
+/* ---------- Why us (list) ---------- */
+.site-template .st-whyus { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.85rem; max-width: 48rem; }
+.site-template .st-whyus li {
+  position: relative; padding-left: 1.9rem; color: var(--ink); font-size: var(--fs-lead); line-height: 1.5;
+}
+.site-template .st-whyus li::before {
+  content: "✓"; position: absolute; left: 0; top: 0;
+  font-weight: 800; color: var(--accent-ink);
+}
+
+/* ---------- Visit blocks + embedded map ---------- */
+.site-template .st-visit-block + .st-visit-block { margin-top: 1.75rem; }
+.site-template .st-map { display: flex; flex-direction: column; gap: 0.6rem; }
+.site-template .st-map iframe {
+  width: 100%; min-height: 260px; flex: 1; border: 0; border-radius: var(--r-md);
+}
+.site-template .st-map-link {
+  align-self: flex-start; color: var(--primary-ink); font-weight: 600;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+
+/* ---------- Final CTA (brand-colored band) ---------- */
+.site-template .st-cta-section {
+  background: var(--primary-deep); color: #fff;
+  padding: var(--sp-section) clamp(1.25rem, 4vw, 2rem);
+}
+.site-template .st-cta-inner { max-width: 46rem; margin: 0 auto; text-align: center; }
+.site-template .st-cta-inner h2 {
+  font-family: var(--font-display); font-weight: 700; font-size: var(--fs-h2);
+  letter-spacing: -0.02em; margin: 0 0 0.75rem;
+}
+.site-template .st-cta-inner p { font-size: var(--fs-lead); color: rgba(255, 255, 255, 0.9); margin: 0 auto 1.75rem; max-width: 34rem; }
+.site-template .st-cta-inner .st-cta-row { justify-content: center; margin-top: 0; }
+
+/* ---------- Floating WhatsApp button ---------- */
+.site-template .st-wa {
+  position: fixed; right: clamp(1rem, 3vw, 1.75rem); bottom: clamp(1rem, 3vw, 1.75rem);
+  z-index: 50; display: inline-flex; align-items: center; justify-content: center;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: #25d366; color: #fff;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.site-template .st-wa:hover { transform: scale(1.06); box-shadow: 0 8px 26px rgba(37, 211, 102, 0.55); }
 
 /* ---------- Motion (page-load only; content visible by default) ---------- */
 @media (prefers-reduced-motion: no-preference) {

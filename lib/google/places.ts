@@ -205,10 +205,31 @@ const DETAILS_FIELDS = [
   "name",
   "formatted_address",
   "formatted_phone_number",
+  "international_phone_number",
   "website",
+  "url",
   "rating",
   "user_ratings_total",
+  "price_level",
+  "geometry",
+  "types",
+  "business_status",
+  "editorial_summary",
   "opening_hours",
+  "current_opening_hours",
+  "dine_in",
+  "takeout",
+  "delivery",
+  "curbside_pickup",
+  "reservable",
+  "serves_breakfast",
+  "serves_brunch",
+  "serves_lunch",
+  "serves_dinner",
+  "serves_beer",
+  "serves_wine",
+  "serves_vegetarian_food",
+  "wheelchair_accessible_entrance",
   "photos",
   "reviews",
 ].join(",");
@@ -246,10 +267,31 @@ interface GooglePlaceResult {
   name?: string;
   formatted_address?: string;
   formatted_phone_number?: string;
+  international_phone_number?: string;
   website?: string;
+  url?: string;
   rating?: number;
   user_ratings_total?: number;
+  price_level?: number;
+  geometry?: { location?: { lat?: number; lng?: number } };
+  types?: string[];
+  business_status?: string;
+  editorial_summary?: { overview?: string };
   opening_hours?: { weekday_text?: string[] };
+  current_opening_hours?: { open_now?: boolean };
+  dine_in?: boolean;
+  takeout?: boolean;
+  delivery?: boolean;
+  curbside_pickup?: boolean;
+  reservable?: boolean;
+  serves_breakfast?: boolean;
+  serves_brunch?: boolean;
+  serves_lunch?: boolean;
+  serves_dinner?: boolean;
+  serves_beer?: boolean;
+  serves_wine?: boolean;
+  serves_vegetarian_food?: boolean;
+  wheelchair_accessible_entrance?: boolean;
   photos?: Array<{ photo_reference?: string; html_attributions?: string[] }>;
   reviews?: Array<{
     author_name?: string;
@@ -263,6 +305,24 @@ interface GooglePlaceResult {
 /** Proxy URL the browser can use to display a photo without seeing the API key. */
 export function photoPreviewUrl(ref: string): string {
   return `/api/photo?ref=${encodeURIComponent(ref)}`;
+}
+
+// Google `types` we drop as noise — they carry no useful category signal.
+const NOISE_TYPES = new Set(["establishment", "point_of_interest", "food"]);
+
+/**
+ * Build an object from `entries`, keeping only the keys whose value is a real
+ * boolean (Google omits unknown attributes, so `undefined` stays out). Returns
+ * `undefined` when nothing is known, so consumers can skip the whole group.
+ */
+function compactFlags<T extends Record<string, boolean | undefined>>(
+  entries: T,
+): T | undefined {
+  const out: Record<string, boolean> = {};
+  for (const [key, value] of Object.entries(entries)) {
+    if (typeof value === "boolean") out[key] = value;
+  }
+  return Object.keys(out).length > 0 ? (out as T) : undefined;
 }
 
 function normalizeBusiness(
@@ -291,14 +351,51 @@ function normalizeBusiness(
 
   const weekdayText = result.opening_hours?.weekday_text ?? [];
 
+  const loc = result.geometry?.location;
+  const location =
+    typeof loc?.lat === "number" && typeof loc?.lng === "number"
+      ? { lat: loc.lat, lng: loc.lng }
+      : undefined;
+
+  const categories = (result.types ?? []).filter((t) => !NOISE_TYPES.has(t));
+
+  const serviceOptions = compactFlags({
+    dineIn: result.dine_in,
+    takeout: result.takeout,
+    delivery: result.delivery,
+    curbsidePickup: result.curbside_pickup,
+    reservable: result.reservable,
+  });
+
+  const serves = compactFlags({
+    breakfast: result.serves_breakfast,
+    brunch: result.serves_brunch,
+    lunch: result.serves_lunch,
+    dinner: result.serves_dinner,
+    beer: result.serves_beer,
+    wine: result.serves_wine,
+    vegetarian: result.serves_vegetarian_food,
+  });
+
   return {
     placeId: result.place_id ?? placeId,
     name: result.name ?? "Your Business",
     address: result.formatted_address,
     phone: result.formatted_phone_number,
+    internationalPhone: result.international_phone_number,
     website: result.website,
+    googleMapsUrl: result.url,
     rating: result.rating,
     userRatingsTotal: result.user_ratings_total,
+    priceLevel: result.price_level,
+    editorialSummary: result.editorial_summary?.overview,
+    location,
+    categories: categories.length > 0 ? categories : undefined,
+    businessStatus: result.business_status,
+    openNow: result.current_opening_hours?.open_now,
+    serviceOptions,
+    serves,
+    wheelchairAccessible: result.wheelchair_accessible_entrance,
     photos,
     hours: weekdayText.length > 0 ? { weekdayText } : undefined,
     reviews,
